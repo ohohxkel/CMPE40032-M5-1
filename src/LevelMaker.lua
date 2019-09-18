@@ -100,7 +100,75 @@ function LevelMaker.generate(width, height)
                 onCollide = function()
                     lock.lockBoolUnlocked = true
                     table.remove(objects, keyID)
+
+                    --M5-T1: Rendering of whole flag after locked brick was unlocked
+                    local parts = math.random(3, 5)
+                    local build = math.random(3, 6)
+                    local flag = width - 1
+
                     gSounds['powerup-reveal']:play()
+
+                    for f = 1, parts do
+                        --M5-T1: Render for the pole
+                        if f == 1 then
+                            table.insert(objects, GameObject {
+                                texture = 'flags',
+                                x = flag * TILE_SIZE,
+                                y = (6 - parts) * TILE_SIZE,
+                                width = 16,
+                                height = 16,
+
+                                frame = build,
+                                collidable = false,
+                                solid = false,
+                                consumable = false
+                            })
+                        --M5-T1: Render for the bottom
+                        elseif f == parts then
+                            table.insert(objects, GameObject {
+                                texture = 'flags',
+                                x = flag * TILE_SIZE,
+                                y = (5) * TILE_SIZE,
+                                width = 16,
+                                height = 16,
+
+                                frame = build + 18,
+                                collidable = false,
+                                solid = false,
+                                consumable = false
+                            })
+                        else
+                            -- M5-T1: Render for body 
+                            table.insert(objects, GameObject {
+                                texture = 'flags',
+                                x = flag * TILE_SIZE,
+                                y = (5 - parts + f) * TILE_SIZE,
+                                width = 16,
+                                height = 16,
+
+                                frame = build + 9,
+                                collidable = false,
+                                solid = false,
+                                consumable = false
+                            })
+
+                            -- M5-T1: Render for flags
+                            table.insert(objects, 
+                            GameObject 
+                            {
+                                texture = 'flags',
+                                x = flag * TILE_SIZE - 8,
+                                y = (5 - parts + f) * TILE_SIZE - TILE_SIZE / 2,
+                                width = 16,
+                                height = 16,
+                                frame = build * 9 - 2 - 18,
+                                collidable = false,
+                                solid = false,
+                                consumable = false,
+                                direction = 'left'
+                            })
+                        end
+                    end
                 end
             }
 

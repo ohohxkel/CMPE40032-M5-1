@@ -12,9 +12,11 @@ function PlayState:init()
     self.camY = 0
     self.level = LevelMaker.generate(100, 10)
     self.tileMap = self.level.tileMap
+    --M5-T1: Flag init if unlocked 
+    self.flag = self.level.lock.lockBoolUnlocked
+
     self.background = math.random(3)
     self.backgroundX = 0
-
     self.gravityOn = true
     self.gravityAmount = 6
 
