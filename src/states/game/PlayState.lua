@@ -20,7 +20,19 @@ function PlayState:init()
     self.gravityOn = true
     self.gravityAmount = 6
 
-    self.player = Player({
+end
+
+--M5-T1: Added enter function because we're gonna be using play state over and over again
+function PlayState:enter(params)
+    local score = params.score
+    local width = params.width
+
+    self.level = LevelMaker.generate(width, 10)
+    self.flag = self.level.lock.lockBoolUnlocked
+    self.tileMap = self.level.tileMap
+
+    self.player = Player(
+    {
         x = 0, y = 0,
         width = 16, height = 20,
         texture = 'green-alien',
@@ -31,12 +43,13 @@ function PlayState:init()
             ['falling'] = function() return PlayerFallingState(self.player, self.gravityAmount) end
         },
         map = self.tileMap,
-        level = self.level
+        level = self.level,
     })
 
-    self:spawnEnemies()
+    self.player.score = score
 
     self.player:changeState('falling')
+    self:spawnEnemies()
 end
 
 function PlayState:update(dt)

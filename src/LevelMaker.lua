@@ -164,8 +164,17 @@ function LevelMaker.generate(width, height)
                                 frame = build * 9 - 2 - 18,
                                 collidable = false,
                                 solid = false,
-                                consumable = false,
-                                direction = 'left'
+                                direction = 'left',
+                                --M5-T1: Let's make it consumable so we can go to another level
+                                consumable = true,
+                                onConsume = function(player)
+                                    gStateMachine:change('play', 
+                                    {
+                                        score = player.score,
+                                        --M5-T1: Adding width every level
+                                        width = width + 50
+                                    })
+                                end
                             })
                         end
                     end
