@@ -20,6 +20,16 @@ function LevelMaker.generate(width, height)
     local tileset = math.random(20)
     local topperset = math.random(20)
 
+    --M5-T1: Added init for lock, with params; Default with false
+    local lock = 
+    {
+        keyX = math.random(10, 49),
+        lockX = math.random(50, 90),
+        pattern = math.random(4),
+        keyAcquired = false,
+        lockBoolUnlocked = false
+    }
+
     -- insert blank tables into tiles for later access
     for x = 1, height do
         table.insert(tiles, {})
@@ -35,8 +45,69 @@ function LevelMaker.generate(width, height)
                 Tile(x, y, tileID, nil, tileset, topperset))
         end
 
+        --M5-T1: Randomly generated as stated on init
+        if x == lock.keyX then
+            tileID = TILE_ID_GROUND
+
+            local blockHeight = 4
+
+            for y = 7, height do
+                table.insert(tiles[y],
+                    Tile(x, y, tileID, y == 7 and topper or nil, tileset, topperset))
+            end
+
+            local key = GameObject 
+            {
+                texture = 'keys',
+                x = (x - 1) * TILE_SIZE,
+                y = (blockHeight - 1) * TILE_SIZE,
+                width = 16,
+                height = 16,
+
+                frame = lock.pattern,
+                collidable = true,
+                solid = false,
+                consumable = true,
+                onConsume = function()
+                    lock.keyAcquired = true
+                    gSounds['powerup-reveal']:play()
+                end
+            }
+
+            table.insert(objects, key)
+
+        elseif x == lock.lockX then
+            tileID = TILE_ID_GROUND
+
+            local blockHeight = 4
+
+            for y = 7, height do
+                table.insert(tiles[y],
+                    Tile(x, y, tileID, y == 7 and topper or nil, tileset, topperset))
+            end
+
+            local keyID = #objects
+            local lock = GameObject {
+                texture = 'keys',
+                x = (x - 1) * TILE_SIZE,
+                y = (blockHeight - 1) * TILE_SIZE,
+                width = 16,
+                height = 16,
+
+                frame = lock.pattern + 4,
+                collidable = true,
+                solid = true,
+                onCollide = function()
+                    lock.lockBoolUnlocked = true
+                    table.remove(objects, keyID)
+                    gSounds['powerup-reveal']:play()
+                end
+            }
+
+            table.insert(objects, lock)
+
         -- chance to just be emptiness
-        if math.random(7) == 1 then
+        elseif math.random(7) == 1 then
             for y = 7, height do
                 table.insert(tiles[y],
                     Tile(x, y, tileID, nil, tileset, topperset))
@@ -160,5 +231,5 @@ function LevelMaker.generate(width, height)
     local map = TileMap(width, height)
     map.tiles = tiles
 
-    return GameLevel(entities, objects, map)
+    return GameLevel(entities, objects, map, lock)
 end

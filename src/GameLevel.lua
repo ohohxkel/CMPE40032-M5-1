@@ -8,10 +8,12 @@
 
 GameLevel = Class{}
 
-function GameLevel:init(entities, objects, tilemap)
+function GameLevel:init(entities, objects, tilemap, lock)
     self.entities = entities
     self.objects = objects
     self.tileMap = tilemap
+    --M5-T1: Added init for locks
+    self.lock = lock
 end
 
 --[[
