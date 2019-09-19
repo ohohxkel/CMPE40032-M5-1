@@ -55,6 +55,13 @@ function LevelMaker.generate(width, height)
                 table.insert(tiles[y],
                     Tile(x, y, tileID, y == 7 and topper or nil, tileset, topperset))
             end
+            --M5-T1: Player never spawn on a empty space
+            if math.random(7) == 1 and x > 3 and x < width - 3 then            
+                for y = 7, height do
+                    table.insert(tiles[y],
+                        Tile(x, y, tileID, nil, tileset, topperset))
+                end
+            else 
 
             local key = GameObject 
             {
@@ -75,6 +82,7 @@ function LevelMaker.generate(width, height)
             }
 
             table.insert(objects, key)
+        end
 
         elseif x == lock.lockX then
             tileID = TILE_ID_GROUND
